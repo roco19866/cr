@@ -1,0 +1,568 @@
+@{
+    ViewData["Title"] = "نظام إصدار الشهادات - تراؤف";
+}
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
+
+    body {
+        font-family: 'Tajawal', sans-serif;
+        background-color: #f5f6f8;
+        color: #40425a;
+    }
+
+    .traof-text {
+        color: #40425a;
+        font-weight: 800;
+    }
+
+    .bg-traof-teal {
+        background-color: #00aa95 !important;
+        color: #ffffff;
+    }
+
+    .bg-traof-green {
+        background-color: #89c843 !important;
+        color: #ffffff;
+    }
+
+    .btn-traof {
+        background: linear-gradient(90deg, #00aa95 0%, #89c843 100%);
+        border: none;
+        color: white;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .btn-traof:hover {
+        background: linear-gradient(90deg, #008f7d 0%, #76ad39 100%);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 170, 149, 0.4);
+    }
+
+    .card {
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        border-bottom: none;
+    }
+
+    .coord-input {
+        border: 1px solid #00aa95;
+        border-radius: 8px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid #ced4da;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #89c843;
+        box-shadow: 0 0 0 0.2rem rgba(137, 200, 67, 0.25);
+    }
+    .draggable-text {
+        position: absolute;
+        cursor: move;
+        color: #000;
+        text-shadow: 1px 1px 2px rgba(255,255,255,0.7), -1px -1px 2px rgba(255,255,255,0.7);
+        user-select: none;
+        display: none;
+        background: rgba(255,255,255,0.4);
+        border: 1px dashed #00aa95;
+        padding: 2px;
+        transform: translate(-50%, -50%);
+        white-space: pre-wrap;
+        text-align: center;
+        min-width: max-content;
+        line-height: 1.2;
+    }
+
+    .fit-image {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+    }
+
+    /* Fixed height preview area */
+    .preview-body {
+        height: 520px;
+        background: #e9ecef;
+        position: relative;
+        overflow: hidden; /* Prevent scrolling in fit mode */
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+    }
+
+    .preview-body.scrollable {
+        overflow: auto;
+        display: block; /* Go back to block/inline-block for manual scroll */
+    }
+</style>
+
+<div class="row" dir="rtl">
+    <div class="col-md-12 text-right">
+        <h2 class="mb-4 traof-text text-center border-bottom pb-3">
+            <span style="color:#89c843">◈</span> 
+            نظام إصدار الشهادات - تراؤف 
+            <span style="color:#00aa95">◈</span>
+        </h2>
+        
+        <form asp-action="GenerateCertificates" asp-controller="Home" method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-header bg-traof-teal">
+                            <h5 class="mb-0">1. إعدادات القالب والملفات</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group mb-3">
+                                <label class="font-weight-bold">اختر قالب الشهادة (صورة JPG أو PNG)</label>
+                                <input type="file" id="TemplateFile" name="TemplateFile" class="form-control" accept="image/*" required onchange="previewImage(event)" />
+                            </div>
+
+                            <div class="form-group mb-3 border p-3 rounded bg-light">
+                                <label class="font-weight-bold" style="color: #00aa95;">المصدر الأول: اختيار من قاعدة الموظفين</label>
+                                <div class="row mb-2 mt-2">
+                                    <div class="col-md-3 mb-1">
+                                        <input type="text" id="filterSearch" class="form-control form-control-sm" placeholder="بحث بالاسم..." onkeyup="fetchEmployees()">
+                                    </div>
+                                    <div class="col-md-3 mb-1">
+                                        <select id="filterGender" class="form-select form-select-sm" onchange="fetchEmployees()">
+                                            <option value="">كل الأجناس</option>
+                                            <option value="ذكر">ذكر</option>
+                                            <option value="أنثى">أنثى</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 mb-1">
+                                        <select id="filterRole" class="form-select form-select-sm" onchange="fetchEmployees()">
+                                            <option value="">كل الوظائف</option>
+                                            <option value="مدير">مدير</option>
+                                            <option value="رئيس قسم">رئيس قسم</option>
+                                            <option value="موظف">موظف</option>
+                                            <option value="سائق">سائق</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3 mb-1">
+                                        <select id="filterDepartment" class="form-select form-select-sm" onchange="fetchEmployees()">
+                                            <option value="">كل الإدارات والأقسام</option>
+                                            <option value="الإدارة العليا">الإدارة العليا</option>
+                                            <option value="تقنية المعلومات">تقنية المعلومات</option>
+                                            <option value="الموارد البشرية">الموارد البشرية</option>
+                                            <option value="التسويق">التسويق</option>
+                                            <option value="العمليات">العمليات</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="table-responsive bg-white border" style="max-height: 200px; overflow-y: auto;">
+                                    <table class="table table-sm table-hover mb-0">
+                                        <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
+                                            <tr>
+                                                <th><input type="checkbox" id="selectAllEmployees" onchange="toggleAllEmployees(this)"></th>
+                                                <th>الاسم</th>
+                                                <th>الجنس</th>
+                                                <th>الوظيفة</th>
+                                                <th>القسم</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="employeesTableBody">
+                                            <tr><td colspan="5" class="text-center text-muted">جاري تحميل الموظفين...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <input type="hidden" name="SelectedEmployeeIds" id="SelectedEmployeeIds" />
+                            </div>
+
+                            <div class="text-center font-weight-bold text-muted my-2">-- أو / بالإضافة إلى --</div>
+
+                            <div class="form-group mb-3 border p-3 rounded bg-light">
+                                <label class="font-weight-bold" style="color: #89c843;">المصدر الثاني: رفع ملف الإكسيل</label>
+                                <small class="text-muted d-block">يجب أن يحتوي العمود الأول على "الاسم" والعمود الثاني على "رقم السجل"</small>
+                                <input type="file" name="ExcelFile" class="form-control" accept=".xlsx, .xls" />
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label class="font-weight-bold">صيغة تصدير الشهادات</label>
+                                <select name="ExportType" class="form-select">
+                                    <option value="png">PNG (صور عالية الجودة)</option>
+                                    <option value="jpg">JPG (صور مضغوطة)</option>
+                                    <option value="pdf">PDF (ملف وثيقة)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-header bg-traof-green">
+                            <h5 class="mb-0">2. إعدادات النصوص المطبوعة وخصائصها</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted small">يمكنك سحب وإفلات النصوص في مساحة المعاينة لتحديد أماكنها.</p>
+                            
+                            <div class="form-row border p-3 mb-3 bg-white rounded shadow-sm">
+                                <div class="col-12 mb-2">
+                                    <label class="font-weight-bold text-traof-teal">النص الإضافي (الثابت)</label>
+                                    <textarea id="AdditionalText" name="AdditionalText" class="form-control mb-2" rows="3" placeholder="أدخل النص هنا..." oninput="updateText('previewAdditional', this.value)"></textarea>
+                                </div>
+                                <div class="col-md-3 col-6 mb-2"><label>نوع الخط:</label><select name="AdditionalTextFontFamily" id="AdditionalTextFontFamily" class="form-select form-select-sm" onchange="updateDraggableDesign()"><option value="Arial">Arial</option><option value="Tahoma">Tahoma</option><option value="Segoe UI">Segoe UI</option><option value="Times New Roman">Times New Roman</option></select></div>
+                                <div class="col-md-3 col-6 mb-2"><label>حجم الخط:</label><input type="number" name="AdditionalTextFontSize" id="AdditionalTextFontSize" class="form-control form-control-sm" value="32" oninput="updateDraggableDesign()" /></div>
+                                <div class="col-md-3 col-6 mb-2"><label>لون الخط:</label><input type="color" name="AdditionalTextFontColor" id="AdditionalTextFontColor" class="form-control form-control-sm" style="height:31px;padding:1px;" value="#000000" oninput="updateDraggableDesign()" /></div>
+                                <div class="col-md-3 col-6 mb-2"><label>المحاذاة:</label><select name="AdditionalTextAlign" id="AdditionalTextAlign" class="form-select form-select-sm" onchange="updateDraggableDesign()"><option value="Center">توسيط</option><option value="Right">يمين</option><option value="Left">يسار</option><option value="Justified">ضبط كامل</option></select></div>
+                                <div class="col-6 mb-2">
+                                    <label class="small text-muted">X:</label> <input type="number" id="AdditionalTextX" name="AdditionalTextX" class="form-control form-control-sm coord-input" value="400" oninput="manualSync('previewAdditional')" onchange="manualSync('previewAdditional')" />
+                                </div>
+                                <div class="col-6 mb-2">
+                                    <label class="small text-muted">Y:</label> <input type="number" id="AdditionalTextY" name="AdditionalTextY" class="form-control form-control-sm coord-input" value="200" oninput="manualSync('previewAdditional')" onchange="manualSync('previewAdditional')" />
+                                </div>
+                            </div>
+                            
+                            <div class="form-row border p-3 mb-3 bg-white rounded shadow-sm">
+                                <div class="col-12 mb-2"><label class="font-weight-bold text-traof-teal" style="color: #00aa95;">بيانات اسم المتدرب (المتغير)</label></div>
+                                <div class="col-md-3 col-6 mb-2"><label>نوع الخط:</label><select name="NameFontFamily" id="NameFontFamily" class="form-select form-select-sm" onchange="updateDraggableDesign()"><option value="Arial">Arial</option><option value="Tahoma">Tahoma</option><option value="Segoe UI">Segoe UI</option><option value="Times New Roman">Times New Roman</option></select></div>
+                                <div class="col-md-3 col-6 mb-2"><label>حجم الخط:</label><input type="number" name="NameFontSize" id="NameFontSize" class="form-control form-control-sm" value="48" oninput="updateDraggableDesign()" /></div>
+                                <div class="col-md-3 col-6 mb-2"><label>لون الخط:</label><input type="color" name="NameFontColor" id="NameFontColor" class="form-control form-control-sm" style="height:31px;padding:1px;" value="#000000" oninput="updateDraggableDesign()" /></div>
+                                <div class="col-md-3 col-6 mb-2"><label>المحاذاة:</label><select name="NameTextAlign" id="NameTextAlign" class="form-select form-select-sm" onchange="updateDraggableDesign()"><option value="Center">توسيط</option><option value="Right">يمين</option><option value="Left">يسار</option><option value="Justified">ضبط كامل</option></select></div>
+                                <div class="col-6 mb-2">
+                                    <label class="small text-muted">X للاسم:</label> <input type="number" id="NameX" name="NameX" class="form-control form-control-sm coord-input" value="400" oninput="manualSync('previewName')" onchange="manualSync('previewName')" />
+                                </div>
+                                <div class="col-6 mb-2">
+                                    <label class="small text-muted">Y للاسم:</label> <input type="number" id="NameY" name="NameY" class="form-control form-control-sm coord-input" value="300" oninput="manualSync('previewName')" onchange="manualSync('previewName')" />
+                                </div>
+                            </div>
+
+                            <div class="form-row border p-3 mb-3 bg-white rounded shadow-sm">
+                                <div class="col-12 mb-2"><label class="font-weight-bold text-traof-teal" style="color: #00aa95;">بيانات السجل المدني (المتغير)</label></div>
+                                <div class="col-md-3 col-6 mb-2"><label>نوع الخط:</label><select name="CivilIdFontFamily" id="CivilIdFontFamily" class="form-select form-select-sm" onchange="updateDraggableDesign()"><option value="Arial">Arial</option><option value="Tahoma">Tahoma</option><option value="Segoe UI">Segoe UI</option><option value="Times New Roman">Times New Roman</option></select></div>
+                                <div class="col-md-3 col-6 mb-2"><label>حجم الخط:</label><input type="number" name="CivilIdFontSize" id="CivilIdFontSize" class="form-control form-control-sm" value="32" oninput="updateDraggableDesign()" /></div>
+                                <div class="col-md-3 col-6 mb-2"><label>لون الخط:</label><input type="color" name="CivilIdFontColor" id="CivilIdFontColor" class="form-control form-control-sm" style="height:31px;padding:1px;" value="#000000" oninput="updateDraggableDesign()" /></div>
+                                <div class="col-md-3 col-6 mb-2"><label>المحاذاة:</label><select name="CivilIdTextAlign" id="CivilIdTextAlign" class="form-select form-select-sm" onchange="updateDraggableDesign()"><option value="Center">توسيط</option><option value="Right">يمين</option><option value="Left">يسار</option><option value="Justified">ضبط كامل</option></select></div>
+                                <div class="col-6 mb-2">
+                                    <label class="small text-muted">X للسجل:</label> <input type="number" id="CivilIdX" name="CivilIdX" class="form-control form-control-sm coord-input" value="400" oninput="manualSync('previewCivil')" onchange="manualSync('previewCivil')" />
+                                </div>
+                                <div class="col-6 mb-2">
+                                    <label class="small text-muted">Y للسجل:</label> <input type="number" id="CivilIdY" name="CivilIdY" class="form-control form-control-sm coord-input" value="400" oninput="manualSync('previewCivil')" onchange="manualSync('previewCivil')" />
+                                </div>
+                            </div>
+
+                            <div class="form-row border p-3 mb-3 bg-white rounded shadow-sm">
+                                <div class="col-12 mb-2">
+                                    <label class="font-weight-bold text-traof-teal">قيمة التاريخ ومكانه</label>
+                                    <input type="text" id="DateText" name="DateText" class="form-control mb-2" value="@DateTime.Now.ToString("yyyy/MM/dd")" oninput="updateText('previewDate', this.value)" />
+                                </div>
+                                <div class="col-md-3 col-6 mb-2"><label>نوع الخط:</label><select name="DateFontFamily" id="DateFontFamily" class="form-select form-select-sm" onchange="updateDraggableDesign()"><option value="Arial">Arial</option><option value="Tahoma">Tahoma</option><option value="Segoe UI">Segoe UI</option><option value="Times New Roman">Times New Roman</option></select></div>
+                                <div class="col-md-3 col-6 mb-2"><label>حجم الخط:</label><input type="number" name="DateFontSize" id="DateFontSize" class="form-control form-control-sm" value="32" oninput="updateDraggableDesign()" /></div>
+                                <div class="col-md-3 col-6 mb-2"><label>لون الخط:</label><input type="color" name="DateFontColor" id="DateFontColor" class="form-control form-control-sm" style="height:31px;padding:1px;" value="#000000" oninput="updateDraggableDesign()" /></div>
+                                <div class="col-md-3 col-6 mb-2"><label>المحاذاة:</label><select name="DateTextAlign" id="DateTextAlign" class="form-select form-select-sm" onchange="updateDraggableDesign()"><option value="Center">توسيط</option><option value="Right">يمين</option><option value="Left">يسار</option><option value="Justified">ضبط كامل</option></select></div>
+                                <div class="col-6 mb-2">
+                                    <label class="small text-muted">X للتاريخ:</label> <input type="number" id="DateX" name="DateX" class="form-control form-control-sm coord-input" value="400" oninput="manualSync('previewDate')" onchange="manualSync('previewDate')" />
+                                </div>
+                                <div class="col-6 mb-2">
+                                    <label class="small text-muted">Y للتاريخ:</label> <input type="number" id="DateY" name="DateY" class="form-control form-control-sm coord-input" value="500" oninput="manualSync('previewDate')" onchange="manualSync('previewDate')" />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-traof btn-lg btn-block mb-5 py-3 w-100">✨ توليد الشهادات وتحميلها (ZIP)</button>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #40425a; color: white;">
+                            <h5 class="mb-0">معاينة القالب</h5>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="fitToggle" onchange="toggleFit()" checked>
+                                <label class="form-check-label small text-white" for="fitToggle">احتواء الصورة</label>
+                            </div>
+                        </div>
+                        <div id="previewCardBody" class="card-body preview-body text-center">
+                            <p id="noImageText" class="text-muted">الرجاء رفع صورة القالب للمعاينة<br/>وشد وإفلات النصوص لتغيير مكانها</p>
+                            <div id="imageContainer" style="position: relative; display: inline-block; max-width: 100%;">
+                                <img id="imagePreview" src="#" alt="معاينة" style="display: none;" class="fit-image" />
+                                
+                                <!-- Draggable Elements -->
+                                <div id="previewName" class="draggable-text" style="font-weight: bold;" data-targetx="NameX" data-targety="NameY">اسم المتدرب</div>
+                                <div id="previewCivil" class="draggable-text" style="font-weight: normal;" data-targetx="CivilIdX" data-targety="CivilIdY">1234567890</div>
+                                <div id="previewAdditional" class="draggable-text" style="font-weight: normal; white-space: pre-wrap; text-align: center;" data-targetx="AdditionalTextX" data-targety="AdditionalTextY">النص الإضافي</div>
+                                <div id="previewDate" class="draggable-text" style="font-weight: normal;" data-targetx="DateX" data-targety="DateY">@DateTime.Now.ToString("yyyy/MM/dd")</div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-light">
+                            <small class="text-muted">تعليمات: ارفع الملف ثم اسحب الكلمات لتحديد مكانها بالتمام!</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let currentScale = 1;
+
+        function previewImage(event) {
+            var reader = new FileReader();
+            reader.onload = function() {
+                var output = document.getElementById('imagePreview');
+                output.src = reader.result;
+                output.style.display = 'block';
+                document.getElementById('noImageText').style.display = 'none';
+
+                output.onload = function() {
+                    // Show our draggable overlays based on their default initial form values
+                    document.querySelectorAll('.draggable-text').forEach(function(el) {
+                        el.style.display = 'block';
+                        updateOverlayPosFromInputs(el);
+                    });
+                    updateDraggableDesign();
+                };
+            }
+            if (event.target.files[0]) {
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        }
+
+        function updateText(id, val) {
+            document.getElementById(id).innerText = val ? val : "(فارغ)";
+        }
+
+        function updateOverlayPosFromInputs(el) {
+            var img = document.getElementById('imagePreview');
+            var rect = img.getBoundingClientRect();
+            var scaleX = rect.width / img.naturalWidth;
+            var scaleY = rect.height / img.naturalHeight;
+
+            var tx = document.getElementById(el.getAttribute("data-targetx")).value;
+            var ty = document.getElementById(el.getAttribute("data-targety")).value;
+
+            // set position based on image bounds
+            el.style.left = (tx * scaleX) + 'px';
+            el.style.top = (ty * scaleY) + 'px';
+        }
+
+        function manualSync(previewId) {
+            let el = document.getElementById(previewId);
+            if(el) updateOverlayPosFromInputs(el);
+        }
+
+        function toggleFit() {
+            var img = document.getElementById('imagePreview');
+            var container = document.getElementById('imageContainer');
+            var cardBody = document.getElementById('previewCardBody');
+            var isFit = document.getElementById('fitToggle').checked;
+            
+            if (isFit) {
+                img.classList.add('fit-image');
+                container.style.width = '100%';
+                container.style.height = '100%';
+                cardBody.classList.remove('scrollable');
+            } else {
+                img.classList.remove('fit-image');
+                container.style.width = 'auto';
+                container.style.height = 'auto';
+                cardBody.classList.add('scrollable');
+            }
+            // Update all positions after a brief delay for transition/reflow
+            setTimeout(() => {
+                document.querySelectorAll('.draggable-text').forEach(el => updateOverlayPosFromInputs(el));
+                updateDraggableDesign();
+            }, 100);
+        }
+
+        // --- Draggable Logic in Vanilla JS ---
+        let activeEl = null;
+        let isDragging = false;
+        let startX, startY, initialLeft, initialTop;
+
+        document.querySelectorAll('.draggable-text').forEach(item => {
+            item.addEventListener('mousedown', function(e) {
+                isDragging = true;
+                activeEl = item;
+                // Get starting points
+                startX = e.clientX;
+                startY = e.clientY;
+                // Get initial positions
+                initialLeft = parseFloat(getComputedStyle(item).left) || 0;
+                initialTop = parseFloat(getComputedStyle(item).top) || 0;
+                e.preventDefault(); // Stop text selection
+            });
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (!isDragging || !activeEl) return;
+            var dx = e.clientX - startX;
+            var dy = e.clientY - startY;
+
+            activeEl.style.left = (initialLeft + dx) + 'px';
+            activeEl.style.top = (initialTop + dy) + 'px';
+        });
+
+        document.addEventListener('mouseup', function() {
+            if (isDragging && activeEl) {
+                // Done dragging, update the coordinate inputs
+                var img = document.getElementById('imagePreview');
+                var rect = img.getBoundingClientRect();
+                
+                var currentLeft = parseFloat(getComputedStyle(activeEl).left) || 0;
+                var currentTop = parseFloat(getComputedStyle(activeEl).top) || 0;
+
+                // Scale it up based on native image size
+                var scaleX = img.naturalWidth / rect.width;
+                var scaleY = img.naturalHeight / rect.height;
+
+                var realX = Math.round(currentLeft * scaleX);
+                var realY = Math.round(currentTop * scaleY);
+
+                // Ensure it stays within bounds
+                if(realX < 0) realX = 0;
+                if(realY < 0) realY = 0;
+                if(realX > img.naturalWidth) realX = img.naturalWidth;
+                if(realY > img.naturalHeight) realY = img.naturalHeight;
+
+                document.getElementById(activeEl.getAttribute("data-targetx")).value = realX;
+                document.getElementById(activeEl.getAttribute("data-targety")).value = realY;
+            }
+            isDragging = false;
+            activeEl = null;
+        });
+
+        // Update when resizing window to keep relative scale accurate
+        window.addEventListener('resize', () => {
+            document.querySelectorAll('.draggable-text').forEach(function(el) {
+                if(el.style.display == 'block') {
+                    updateOverlayPosFromInputs(el);
+                }
+            });
+        });
+
+        // Function to update the appearance of draggable overlays based on the user's font selections
+        function updateDraggableDesign() {
+            var img = document.getElementById('imagePreview');
+            var rect = img.getBoundingClientRect();
+            var scaleX = rect.width / img.naturalWidth || 0.5;
+
+            let mapOptions = [
+                { id: 'previewName', prefix: 'Name' },
+                { id: 'previewCivil', prefix: 'CivilId' },
+                { id: 'previewDate', prefix: 'Date' },
+                { id: 'previewAdditional', prefix: 'AdditionalText' }
+            ];
+
+            mapOptions.forEach(op => {
+                let textEl = document.getElementById(op.id);
+                if (textEl) {
+                    textEl.style.color = document.getElementById(op.prefix + 'FontColor')?.value || '#000';
+                    textEl.style.fontFamily = document.getElementById(op.prefix + 'FontFamily')?.value || 'Arial';
+                    let rawSize = document.getElementById(op.prefix + 'FontSize')?.value || 32;
+                    // Proportional Scaling!
+                    textEl.style.fontSize = (rawSize * scaleX) + 'px';
+                    
+                    let alignValue = document.getElementById(op.prefix + 'TextAlign')?.value || 'Center';
+                    let textAlignMap = { 'Right': 'right', 'Left': 'left', 'Center': 'center', 'Justified': 'justify' };
+                    textEl.style.textAlign = textAlignMap[alignValue];
+                }
+            });
+        }
+
+        // Initialize texts at begin
+        setTimeout(() => {
+            let addT = document.getElementById('AdditionalText');
+            if(addT) updateText('previewAdditional', addT.value);
+            
+            let dateT = document.getElementById('DateText');
+            if(dateT) updateText('previewDate', dateT.value);
+
+            updateDraggableDesign();
+            fetchEmployees(); // Load DB employees
+        }, 100);
+
+        // --- DBAJAX Logic ---
+        let loadedEmployees = [];
+        let currentlySelectedIds = new Set();
+        
+        async function fetchEmployees() {
+            let search = document.getElementById('filterSearch').value;
+            let gender = document.getElementById('filterGender').value;
+            let role = document.getElementById('filterRole').value;
+            let department = document.getElementById('filterDepartment').value;
+            
+            let params = new URLSearchParams({ search: search, gender: gender, role: role, department: department });
+            
+            try {
+                let response = await fetch('/Home/GetEmployees?' + params.toString());
+                loadedEmployees = await response.json();
+                renderEmployeesTable();
+            } catch(e) {
+                console.error("Failed to load employees", e);
+            }
+        }
+        
+        function renderEmployeesTable() {
+            let tbody = document.getElementById('employeesTableBody');
+            tbody.innerHTML = '';
+            
+            if(loadedEmployees.length === 0) {
+                 tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">لا يوجد نتائج تطابق الفلتر</td></tr>';
+                 return;
+            }
+            
+            loadedEmployees.forEach(emp => {
+                let isChecked = currentlySelectedIds.has(emp.id) ? 'checked' : '';
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="checkbox" class="emp-checkbox" value="${emp.id}" onchange="updateSelectedSet(this)" ${isChecked}></td>
+                    <td>${emp.name}</td>
+                    <td>${emp.gender || '-'}</td>
+                    <td>${emp.role || '-'}</td>
+                    <td>${emp.department || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            syncSelectAllUI();
+        }
+        
+        function updateSelectedSet(cb) {
+            let id = parseInt(cb.value);
+            if(cb.checked) {
+                currentlySelectedIds.add(id);
+            } else {
+                currentlySelectedIds.delete(id);
+            }
+            updateHiddenInput();
+            syncSelectAllUI();
+        }
+        
+        function toggleAllEmployees(mainCb) {
+            let cbs = document.querySelectorAll('.emp-checkbox');
+            cbs.forEach(cb => {
+                cb.checked = mainCb.checked;
+                let id = parseInt(cb.value);
+                if(mainCb.checked) currentlySelectedIds.add(id);
+                else currentlySelectedIds.delete(id);
+            });
+            updateHiddenInput();
+        }
+        
+        function syncSelectAllUI() {
+            let cbs = document.querySelectorAll('.emp-checkbox');
+            let mainCb = document.getElementById('selectAllEmployees');
+            if(cbs.length === 0) { mainCb.checked = false; return; }
+            mainCb.checked = Array.from(cbs).every(c => c.checked);
+        }
+        
+        function updateHiddenInput() {
+            document.getElementById('SelectedEmployeeIds').value = Array.from(currentlySelectedIds).join(',');
+        }
+    </script>
+}
