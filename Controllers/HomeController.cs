@@ -16,6 +16,12 @@ namespace CertificateSystem.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly IWebHostEnvironment _env;
+        public HomeController(IWebHostEnvironment env)
+        {
+            _env = env;
+        }
+
         public IActionResult Index()
         {
             return View();
@@ -90,16 +96,29 @@ namespace CertificateSystem.Controllers
 
             // Process fonts
             FontCollection collection = new FontCollection();
+            string fontPath = Path.Combine(_env.WebRootPath, "fonts", "Cairo-Bold.ttf");
+            FontFamily? cairoFamily = null;
+            if (System.IO.File.Exists(fontPath))
+            {
+                try { cairoFamily = collection.Add(fontPath); } catch { }
+            }
             
             // Helper to get font
             Font GetFont(string familyName, int baseSize, FontStyle style = FontStyle.Bold)
             {
                 FontFamily f;
-                if (!SystemFonts.TryGet(familyName ?? "Arial", out f))
+                bool found = false;
+                if (!string.IsNullOrEmpty(familyName)) found = SystemFonts.TryGet(familyName, out f);
+                else f = default;
+
+                if (!found && !string.IsNullOrEmpty(familyName)) found = collection.TryGet(familyName, out f);
+                
+                if (!found)
                 {
                     if (!SystemFonts.TryGet("Arial", out f) && !SystemFonts.TryGet("Segoe UI", out f))
                     {
-                        f = SystemFonts.Families.FirstOrDefault();
+                        if (cairoFamily.HasValue) f = cairoFamily.Value;
+                        else f = SystemFonts.Families.FirstOrDefault();
                     }
                 }
                 return f.CreateFont(baseSize > 0 ? baseSize : 32, style);

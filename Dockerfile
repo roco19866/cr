@@ -15,6 +15,12 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build-env /app/out .
 
+# Install font and imaging dependencies for Linux
+RUN apt-get update && apt-get install -y \
+    libgdiplus \
+    libfontconfig1 \
+    && rm -rf /var/lib/apt/lists/*
+
 # Expose port 8080 (standard for .NET 8 in containers)
 EXPOSE 8080
 ENV ASPNETCORE_URLS=http://+:8080
