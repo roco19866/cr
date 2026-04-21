@@ -1,0 +1,11 @@
+**/.git
+**/.gitignore
+**/bin
+**/obj
+**/out
+**/app.db
+**/app.db-shm
+**/app.db-wal
+**/implementation_plan.md
+**/task.md
+**/walkthrough.md
