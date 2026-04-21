@@ -119,7 +119,6 @@ namespace CertificateSystem.Controllers
                 {
                     "Right" => TextAlignment.Start,  // Start is Right in RTL
                     "Left" => TextAlignment.End,     // End is Left in RTL
-                    "Justified" => TextAlignment.Justified,
                     _ => TextAlignment.Center
                 };
             }
