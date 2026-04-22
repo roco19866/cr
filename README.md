@@ -11,6 +11,8 @@ A professional ASP.NET Core system for generating certificates from image templa
 
 ## 🚀 Live Deployment (Render)
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/roco19866/cr)
+
 To host this project on the web so anyone can use it:
 
 1. Create a free account on [Render.com](https://render.com).
