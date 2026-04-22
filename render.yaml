@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: certificate-system
+    env: docker
+    plan: free
+    region: ohio
+    healthCheckPath: /
+    autoDeploy: true
