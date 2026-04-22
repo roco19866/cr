@@ -41,7 +41,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // Disabled for Render compatibility (handled by their proxy)
 app.UseStaticFiles();
 
 app.UseRouting();
