@@ -8,6 +8,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped<CertificateSystem.Services.IEmailService, CertificateSystem.Services.EmailService>();
+builder.Services.AddScoped<CertificateSystem.Services.IWhatsAppService, CertificateSystem.Services.WhatsAppService>();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())

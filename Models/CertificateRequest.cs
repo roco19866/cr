@@ -55,5 +55,9 @@ namespace CertificateSystem.Models
         public int AdditionalTextFontSize { get; set; } = 32;
         public string AdditionalTextFontColor { get; set; } = "#000000";
         public string AdditionalTextAlign { get; set; } = "Center";
+        
+        // Delivery Options
+        public bool SendEmail { get; set; } = false;
+        public bool SendWhatsApp { get; set; } = false;
     }
 }

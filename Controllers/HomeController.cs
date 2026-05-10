@@ -11,15 +11,21 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System.Diagnostics;
 using System.IO.Compression;
+using CertificateSystem.Services;
 
 namespace CertificateSystem.Controllers
 {
     public class HomeController : Controller
     {
         private readonly IWebHostEnvironment _env;
-        public HomeController(IWebHostEnvironment env)
+        private readonly IEmailService _emailService;
+        private readonly IWhatsAppService _whatsAppService;
+
+        public HomeController(IWebHostEnvironment env, IEmailService emailService, IWhatsAppService whatsAppService)
         {
             _env = env;
+            _emailService = emailService;
+            _whatsAppService = whatsAppService;
         }
 
         public IActionResult Index()
@@ -58,7 +64,7 @@ namespace CertificateSystem.Controllers
             var certificates = new List<(string FileName, byte[] Data)>();
 
             // 1. Read the Students
-            var students = new List<(string Name, string CivilId)>();
+            var students = new List<(string Name, string CivilId, string Email, string Phone)>();
             
             if (request.ExcelFile != null && request.ExcelFile.Length > 0)
             {
@@ -76,7 +82,7 @@ namespace CertificateSystem.Controllers
                             var civilId = row.Cell(2).Value.ToString();
                             if (!string.IsNullOrWhiteSpace(name))
                             {
-                                students.Add((name, civilId));
+                                students.Add((name, civilId, row.Cell(3).Value.ToString(), row.Cell(4).Value.ToString()));
                             }
                         }
                     }
@@ -90,7 +96,7 @@ namespace CertificateSystem.Controllers
                 var dbEmployees = await db.Employees.Where(e => ids.Contains(e.Id)).ToListAsync();
                 foreach(var emp in dbEmployees) 
                 {
-                     students.Add((emp.Name, emp.CivilId ?? ""));
+                     students.Add((emp.Name, emp.CivilId ?? "", emp.Email ?? "", emp.Phone ?? ""));
                 }
             }
 
@@ -243,6 +249,32 @@ namespace CertificateSystem.Controllers
                     }
 
                     certificates.Add((fileName, finalData));
+
+                    // 4. Send via Email
+                    if (request.SendEmail && !string.IsNullOrEmpty(student.Email))
+                    {
+                        try
+                        {
+                            await _emailService.SendEmailWithAttachmentAsync(
+                                student.Email,
+                                "شهادة إتمام - نظام تراؤف",
+                                $"السلام عليكم {student.Name}، نرفق لكم شهادتكم.",
+                                finalData,
+                                fileName);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error sending email to {student.Email}: {ex.Message}");
+                        }
+                    }
+
+                    // 5. Send via WhatsApp Simulation / Link Generation
+                    if (request.SendWhatsApp && !string.IsNullOrEmpty(student.Phone))
+                    {
+                        var waLink = _whatsAppService.GenerateWhatsAppLink(student.Phone, $"شهادتك جاهزة يا {student.Name}");
+                        // In a real scenario, you'd send the file via API, here we log the link
+                        Console.WriteLine($"WhatsApp link for {student.Name}: {waLink}");
+                    }
                 }
                 counter++;
             }
@@ -264,6 +296,21 @@ namespace CertificateSystem.Controllers
                 zipStream.Position = 0;
                 return File(zipStream.ToArray(), "application/zip", "Certificates.zip");
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateEmployee(int id, string name, string email, string phone, [FromServices] AppDbContext db)
+        {
+            var emp = await db.Employees.FindAsync(id);
+            if (emp != null)
+            {
+                emp.Name = name;
+                emp.Email = email;
+                emp.Phone = phone;
+                await db.SaveChangesAsync();
+                return Json(new { success = true });
+            }
+            return Json(new { success = false });
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

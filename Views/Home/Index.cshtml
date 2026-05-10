@@ -62,10 +62,11 @@
                                     <table class="table table-sm table-hover mb-0" style="font-size: 0.75rem;">
                                         <thead class="bg-light sticky-top">
                                             <tr>
-                                                <th width="30"><input type="checkbox" id="selectAllEmployees" onchange="toggleAllEmployees(this)" class="form-check-input"></th>
-                                                <th>الاسم</th>
-                                                <th>القسم</th>
-                                            </tr>
+                                                 <th width="30"><input type="checkbox" id="selectAllEmployees" onchange="toggleAllEmployees(this)" class="form-check-input"></th>
+                                                 <th>الاسم</th>
+                                                 <th>البريد/الجوال</th>
+                                                 <th>إجراء</th>
+                                             </tr>
                                         </thead>
                                         <tbody id="employeesTableBody">
                                             <tr><td colspan="3" class="text-center py-3 text-muted">جاري التحميل...</td></tr>
@@ -230,6 +231,18 @@
                                 <label class="btn btn-outline-primary py-2" for="jpg">JPG</label>
                                 <input type="radio" class="btn-check" name="ExportType" id="pdf" value="pdf">
                                 <label class="btn btn-outline-primary py-2" for="pdf">PDF</label>
+                            </div>
+
+                            <div class="mt-4 border-top pt-3">
+                                <label class="form-label-premium mb-3 d-block"><i class="fa-solid fa-paper-plane me-1"></i> خيارات الإرسال</label>
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" id="SendEmail" name="SendEmail" value="true">
+                                    <label class="form-check-label small" for="SendEmail">إرسال عبر البريد الإلكتروني</label>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="SendWhatsApp" name="SendWhatsApp" value="true">
+                                    <label class="form-check-label small" for="SendWhatsApp">إرسال عبر الواتساب</label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -487,18 +500,48 @@
             let tbody = document.getElementById('employeesTableBody');
             tbody.innerHTML = '';
             if(employees.length === 0) {
-                 tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted py-3 small">لا يوجد نتائج</td></tr>';
+                 tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3 small">لا يوجد نتائج</td></tr>';
                  return;
             }
             employees.forEach(emp => {
                 let tr = document.createElement('tr');
+                tr.id = `emp-row-${emp.id}`;
                 tr.innerHTML = `
                     <td><input type="checkbox" class="emp-checkbox form-check-input" value="${emp.id}" onchange="updateSelectedIds()"></td>
-                    <td>${emp.name}</td>
-                    <td>${emp.department || '-'}</td>
+                    <td><div class="fw-bold">${emp.name}</div><div class="text-muted extra-small">${emp.department || ''}</div></td>
+                    <td>
+                        <div class="text-primary small"><i class="fa-solid fa-envelope me-1"></i> ${emp.email || 'لا يوجد'}</div>
+                        <div class="text-success small"><i class="fa-solid fa-phone me-1"></i> ${emp.phone || 'لا يوجد'}</div>
+                    </td>
+                    <td><button type="button" class="btn btn-link btn-sm p-0" onclick='editEmployee(${JSON.stringify(emp)})'><i class="fa-solid fa-pen-to-square"></i></button></td>
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        function editEmployee(emp) {
+            let name = prompt("تعديل الاسم:", emp.name);
+            let email = prompt("تعديل البريد الإلكتروني:", emp.email || "");
+            let phone = prompt("تعديل رقم الجوال:", emp.phone || "");
+            
+            if (name !== null) {
+                saveEmployee(emp.id, name, email, phone);
+            }
+        }
+
+        async function saveEmployee(id, name, email, phone) {
+            let formData = new FormData();
+            formData.append('id', id);
+            formData.append('name', name);
+            formData.append('email', email);
+            formData.append('phone', phone);
+
+            try {
+                let response = await fetch('/Home/UpdateEmployee', { method: 'POST', body: formData });
+                let res = await response.json();
+                if (res.success) fetchEmployees();
+                else alert("فشل الحفظ");
+            } catch(e) { console.error(e); }
         }
 
         function updateSelectedIds() {
