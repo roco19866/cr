@@ -39,39 +39,26 @@
                                     <i class="fa-solid fa-users-gear me-2"></i> مصدر البيانات
                                 </label>
                                 
-                                <div class="row g-2 mb-3">
-                                    <div class="col-12">
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-magnifying-glass small text-muted"></i></span>
-                                            <input type="text" id="filterSearch" class="form-control border-start-0 ps-0" placeholder="بحث بالاسم..." onkeyup="fetchEmployees()">
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <select id="filterDepartment" class="form-select form-select-sm" onchange="fetchEmployees()">
-                                            <option value="">كل الأقسام</option>
-                                            <option value="الإدارة العليا">الإدارة العليا</option>
-                                            <option value="تقنية المعلومات">تقنية المعلومات</option>
-                                            <option value="الموارد البشرية">الموارد البشرية</option>
-                                            <option value="التسويق">التسويق</option>
-                                            <option value="العمليات">العمليات</option>
-                                        </select>
-                                    </div>
+                                <div class="search-wrapper-premium mb-3">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input type="text" id="filterSearch" placeholder="بحث بالاسم..." onkeyup="fetchEmployees()">
                                 </div>
 
-                                <div class="table-responsive rounded-3 border bg-white" style="max-height: 180px; overflow-y: auto;">
-                                    <table class="table table-sm table-hover mb-0" style="font-size: 0.75rem;">
-                                        <thead class="bg-light sticky-top">
-                                            <tr>
-                                                 <th width="30"><input type="checkbox" id="selectAllEmployees" onchange="toggleAllEmployees(this)" class="form-check-input"></th>
-                                                 <th>الاسم</th>
-                                                 <th>البريد/الجوال</th>
-                                                 <th>إجراء</th>
-                                             </tr>
-                                        </thead>
-                                        <tbody id="employeesTableBody">
-                                            <tr><td colspan="3" class="text-center py-3 text-muted">جاري التحميل...</td></tr>
-                                        </tbody>
-                                    </table>
+                                <div class="pill-selector mb-3">
+                                    @foreach (var dept in new[] { "كل الأقسام", "الإدارة العليا", "تقنية المعلومات", "الموارد البشرية", "التسويق", "العمليات" })
+                                    {
+                                        <div class="pill-item @(dept == "كل الأقسام" ? "active" : "")" onclick="selectDepartment(this, '@(dept == "كل الأقسام" ? "" : dept)')">@dept</div>
+                                    }
+                                </div>
+                                <input type="hidden" id="filterDepartment" value="">
+
+                                <div id="employeesContainer" class="mt-2" style="max-height: 280px; overflow-y: auto; padding: 4px;">
+                                    <div class="text-center py-4 text-muted small">جاري التحميل...</div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center mt-2 px-1">
+                                    <div class="small text-muted"><span id="selectedCount" class="fw-bold text-primary">0</span> موظف مختار</div>
+                                    <button type="button" class="btn btn-link btn-sm text-decoration-none p-0 small fw-bold" onclick="toggleAllEmployees()">تحديد الكل</button>
                                 </div>
                                 <input type="hidden" name="SelectedEmployeeIds" id="SelectedEmployeeIds" />
                             </div>
@@ -89,14 +76,13 @@
                     <div id="collapseText" class="accordion-collapse collapse" data-bs-parent="#settingsAccordion">
                         <div class="accordion-body">
                             <!-- Name Layer -->
-                            <div class="layer-card p-3 border rounded-4 mb-3 bg-app">
+                            <div class="layer-card p-3 border rounded-4 mb-3 bg-app" onclick="focusElement('previewName')">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <h6 class="fw-bold mb-0 small text-primary"><i class="fa-solid fa-user-tag me-1"></i> طبقة الاسم</h6>
                                     <div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" checked disabled></div>
                                 </div>
                                 <div class="row g-2 mb-2">
                                     <div class="col-12">
-                                        <label class="small text-muted mb-1">الخط</label>
                                         <select name="NameFontFamily" id="NameFontFamily" class="form-select form-select-sm" onchange="updateDraggableDesign()">
                                             <option value="Tajawal">Tajawal (Default)</option>
                                             <option value="Cairo">Cairo</option>
@@ -104,15 +90,12 @@
                                         </select>
                                     </div>
                                     <div class="col-6">
-                                        <label class="small text-muted mb-1">الحجم</label>
                                         <input type="number" name="NameFontSize" id="NameFontSize" class="form-control form-control-sm" value="48" oninput="updateDraggableDesign()" />
                                     </div>
                                     <div class="col-6">
-                                        <label class="small text-muted mb-1">اللون</label>
                                         <input type="color" name="NameFontColor" id="NameFontColor" class="form-control form-control-sm h-auto p-0 border-0" value="#000000" oninput="updateDraggableDesign()" />
                                     </div>
                                     <div class="col-12">
-                                        <label class="small text-muted mb-1">المحاذاة</label>
                                         <select name="NameTextAlign" id="NameTextAlign" class="form-select form-select-sm" onchange="updateDraggableDesign()">
                                             <option value="Center">توسيط</option>
                                             <option value="Right">يمين</option>
@@ -125,7 +108,7 @@
                             </div>
 
                             <!-- Civil ID Layer -->
-                            <div class="layer-card p-3 border rounded-4 mb-3 bg-app">
+                            <div class="layer-card p-3 border rounded-4 mb-3 bg-app" onclick="focusElement('previewCivil')">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <h6 class="fw-bold mb-0 small text-primary"><i class="fa-solid fa-id-card me-1"></i> طبقة السجل</h6>
                                     <div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="toggleCivil" checked onchange="toggleLayer('previewCivil', this)"></div>
@@ -152,7 +135,7 @@
                             </div>
 
                             <!-- Date Layer -->
-                            <div class="layer-card p-3 border rounded-4 mb-3 bg-app">
+                            <div class="layer-card p-3 border rounded-4 mb-3 bg-app" onclick="focusElement('previewDate')">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <h6 class="fw-bold mb-0 small text-primary"><i class="fa-solid fa-calendar-day me-1"></i> طبقة التاريخ</h6>
                                     <div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="toggleDate" checked onchange="toggleLayer('previewDate', this)"></div>
@@ -182,7 +165,7 @@
                             </div>
 
                             <!-- Additional Text -->
-                            <div class="layer-card p-3 border rounded-4 bg-app">
+                            <div class="layer-card p-3 border rounded-4 bg-app" onclick="focusElement('previewAdditional')">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <h6 class="fw-bold mb-0 small text-primary"><i class="fa-solid fa-align-right me-1"></i> نص إضافي</h6>
                                     <div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="toggleAdditional" onchange="toggleLayer('previewAdditional', this)"></div>
@@ -263,7 +246,7 @@
                     <h4 class="fw-bold text-main mb-0">لوحة التصميم الذكية</h4>
                     <p class="text-muted small">حدد مواقع العناصر بدقة عن طريق السحب</p>
                 </div>
-                <div class="workspace-tools bg-white p-2 rounded-4 shadow-sm d-flex align-items-center">
+                <div class="workspace-tools glass-effect p-2 rounded-4 shadow-sm d-flex align-items-center">
                     <div class="form-check form-switch me-3 pt-1">
                         <input class="form-check-input" type="checkbox" id="fitToggle" onchange="toggleFit()" checked>
                         <label class="form-check-label small fw-bold" for="fitToggle">احتواء</label>
@@ -283,7 +266,7 @@
                 </div>
 
                 <div id="imageContainer" style="position: relative; display: none;" class="animate-scale-in">
-                    <img id="imagePreview" src="#" alt="معاينة" class="fit-image shadow-xl rounded-2" />
+                    <img id="imagePreview" src="#" alt="معاينة" class="fit-image shadow-premium rounded-2" />
                     
                     <!-- Draggable Elements -->
                     <div id="previewName" class="draggable-text-premium" data-targetx="NameX" data-targety="NameY">
@@ -319,13 +302,15 @@
     }
     
     .layer-card {
-        transition: all 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         border: 1px solid var(--border-color) !important;
+        cursor: pointer;
     }
     
     .layer-card:hover {
         border-color: var(--primary) !important;
-        box-shadow: var(--shadow-sm);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
     }
     
     .shadow-inner {
@@ -345,6 +330,14 @@
 
 @section Scripts {
     <script>
+        // Department Logic
+        function selectDepartment(el, dept) {
+            document.querySelectorAll('.pill-item').forEach(p => p.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('filterDepartment').value = dept;
+            fetchEmployees();
+        }
+
         // Preview logic
         function previewImage(event) {
             var reader = new FileReader();
@@ -356,11 +349,9 @@
 
                 output.onload = function() {
                     document.querySelectorAll('.draggable-text-premium').forEach(function(el) {
-                        // Only show if layer toggle is checked
                         let toggleId = "toggle" + el.id.replace("preview", "");
                         let toggle = document.getElementById(toggleId);
                         if (!toggle || toggle.checked) el.style.display = 'block';
-                        
                         updateOverlayPosFromInputs(el);
                     });
                     updateDraggableDesign();
@@ -374,8 +365,6 @@
         function toggleLayer(previewId, cb) {
             let el = document.getElementById(previewId);
             if (el) el.style.display = cb.checked ? 'block' : 'none';
-            
-            // Visual feedback for controls
             let controlsId = cb.id.replace("toggle", "").toLowerCase() + "Controls";
             let controls = document.getElementById(controlsId);
             if(controls) controls.classList.toggle('opacity-50', !cb.checked);
@@ -393,12 +382,9 @@
             var rect = img.getBoundingClientRect();
             var scaleX = rect.width / img.naturalWidth;
             var scaleY = rect.height / img.naturalHeight;
-
             var txInput = document.getElementById(el.getAttribute("data-targetx"));
             var tyInput = document.getElementById(el.getAttribute("data-targety"));
-            
             if(!txInput || !tyInput) return;
-
             el.style.left = (txInput.value * scaleX) + 'px';
             el.style.top = (tyInput.value * scaleY) + 'px';
         }
@@ -408,7 +394,6 @@
             var isFit = document.getElementById('fitToggle').checked;
             img.style.maxWidth = isFit ? '100%' : 'none';
             img.style.maxHeight = isFit ? '75vh' : 'none';
-            
             setTimeout(() => {
                 document.querySelectorAll('.draggable-text-premium').forEach(el => {
                    if(el.style.display !== 'none') updateOverlayPosFromInputs(el);
@@ -426,6 +411,7 @@
             item.addEventListener('mousedown', function(e) {
                 isDragging = true;
                 activeEl = item;
+                item.classList.add('active-drag');
                 startX = e.clientX;
                 startY = e.clientY;
                 initialLeft = parseFloat(getComputedStyle(item).left) || 0;
@@ -444,13 +430,13 @@
 
         document.addEventListener('mouseup', function() {
             if (isDragging && activeEl) {
+                activeEl.classList.remove('active-drag');
                 var img = document.getElementById('imagePreview');
                 var rect = img.getBoundingClientRect();
                 var currentLeft = parseFloat(getComputedStyle(activeEl).left) || 0;
                 var currentTop = parseFloat(getComputedStyle(activeEl).top) || 0;
                 var scaleX = img.naturalWidth / rect.width;
                 var scaleY = img.naturalHeight / rect.height;
-
                 document.getElementById(activeEl.getAttribute("data-targetx")).value = Math.round(currentLeft * scaleX);
                 document.getElementById(activeEl.getAttribute("data-targety")).value = Math.round(currentTop * scaleY);
             }
@@ -462,14 +448,12 @@
             var img = document.getElementById('imagePreview');
             var rect = img.getBoundingClientRect();
             var scaleX = rect.width / img.naturalWidth || 1;
-
             let configs = [
                 { id: 'previewName', prefix: 'Name' },
                 { id: 'previewCivil', prefix: 'CivilId' },
                 { id: 'previewDate', prefix: 'Date' },
                 { id: 'previewAdditional', prefix: 'AdditionalText' }
             ];
-
             configs.forEach(conf => {
                 let textEl = document.getElementById(conf.id);
                 if (textEl) {
@@ -477,11 +461,19 @@
                     content.style.color = document.getElementById(conf.prefix + 'FontColor')?.value || '#000';
                     content.style.fontFamily = document.getElementById(conf.prefix + 'FontFamily')?.value || 'Tajawal';
                     content.style.textAlign = document.getElementById(conf.prefix + 'TextAlign')?.value || 'center';
-                    
                     let rawSize = document.getElementById(conf.prefix + 'FontSize')?.value || 32;
                     content.style.fontSize = (rawSize * scaleX) + 'px';
                 }
             });
+        }
+
+        function focusElement(id) {
+            document.querySelectorAll('.draggable-text-premium').forEach(el => el.classList.remove('active-drag'));
+            let el = document.getElementById(id);
+            if(el) {
+                el.classList.add('active-drag');
+                setTimeout(() => el.classList.remove('active-drag'), 1500);
+            }
         }
 
         // Employee logic
@@ -497,36 +489,54 @@
         }
 
         function renderEmployees(employees) {
-            let tbody = document.getElementById('employeesTableBody');
-            tbody.innerHTML = '';
+            let container = document.getElementById('employeesContainer');
+            container.innerHTML = '';
             if(employees.length === 0) {
-                 tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3 small">لا يوجد نتائج</td></tr>';
+                 container.innerHTML = '<div class="text-center py-4 text-muted small">لا يوجد نتائج</div>';
                  return;
             }
+            let selectedIds = document.getElementById('SelectedEmployeeIds').value.split(',').filter(id => id);
+            
             employees.forEach(emp => {
-                let tr = document.createElement('tr');
-                tr.id = `emp-row-${emp.id}`;
-                tr.innerHTML = `
-                    <td><input type="checkbox" class="emp-checkbox form-check-input" value="${emp.id}" onchange="updateSelectedIds()"></td>
-                    <td><div class="fw-bold">${emp.name}</div><div class="text-muted extra-small">${emp.department || ''}</div></td>
-                    <td>
-                        <div class="text-primary small"><i class="fa-solid fa-envelope me-1"></i> ${emp.email || 'لا يوجد'}</div>
-                        <div class="text-success small"><i class="fa-solid fa-phone me-1"></i> ${emp.phone || 'لا يوجد'}</div>
-                    </td>
-                    <td><button type="button" class="btn btn-link btn-sm p-0" onclick='editEmployee(${JSON.stringify(emp)})'><i class="fa-solid fa-pen-to-square"></i></button></td>
+                let isSelected = selectedIds.includes(emp.id.toString());
+                let div = document.createElement('div');
+                div.className = `emp-list-item ${isSelected ? 'selected' : ''}`;
+                div.setAttribute('data-id', emp.id);
+                div.onclick = () => toggleEmployee(div, emp.id);
+                div.innerHTML = `
+                    <div class="form-check m-0">
+                        <input type="checkbox" class="form-check-input" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation()">
+                    </div>
+                    <div class="ms-3 flex-grow-1">
+                        <div class="fw-bold small d-flex justify-content-between">
+                            <span>${emp.name}</span>
+                            <button type="button" class="btn btn-link btn-sm p-0 text-muted" onclick="event.stopPropagation(); editEmployee(${JSON.stringify(emp)})"><i class="fa-solid fa-pen-to-square"></i></button>
+                        </div>
+                        <div class="text-muted" style="font-size: 0.7rem;">
+                            ${emp.department || 'بدون قسم'} | 
+                            <span class="text-primary">${emp.email || 'بدون بريد'}</span>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-circle-check text-primary ms-2 ${isSelected ? '' : 'd-none'}"></i>
                 `;
-                tbody.appendChild(tr);
+                container.appendChild(div);
             });
+            updateSelectedCount();
+        }
+
+        function toggleEmployee(el, id) {
+            let cb = el.querySelector('input');
+            cb.checked = !cb.checked;
+            el.classList.toggle('selected', cb.checked);
+            el.querySelector('i').classList.toggle('d-none', !cb.checked);
+            updateSelectedIds();
         }
 
         function editEmployee(emp) {
             let name = prompt("تعديل الاسم:", emp.name);
             let email = prompt("تعديل البريد الإلكتروني:", emp.email || "");
             let phone = prompt("تعديل رقم الجوال:", emp.phone || "");
-            
-            if (name !== null) {
-                saveEmployee(emp.id, name, email, phone);
-            }
+            if (name !== null) saveEmployee(emp.id, name, email, phone);
         }
 
         async function saveEmployee(id, name, email, phone) {
@@ -535,7 +545,6 @@
             formData.append('name', name);
             formData.append('email', email);
             formData.append('phone', phone);
-
             try {
                 let response = await fetch('/Home/UpdateEmployee', { method: 'POST', body: formData });
                 let res = await response.json();
@@ -545,18 +554,29 @@
         }
 
         function updateSelectedIds() {
-            let selected = Array.from(document.querySelectorAll('.emp-checkbox:checked')).map(cb => cb.value);
+            let selected = Array.from(document.querySelectorAll('.emp-list-item input:checked'))
+                               .map(cb => cb.closest('.emp-list-item').getAttribute('data-id'));
             document.getElementById('SelectedEmployeeIds').value = selected.join(',');
+            updateSelectedCount();
         }
 
-        function toggleAllEmployees(mainCb) {
-            document.querySelectorAll('.emp-checkbox').forEach(cb => cb.checked = mainCb.checked);
+        function updateSelectedCount() {
+            let count = document.getElementById('SelectedEmployeeIds').value.split(',').filter(id => id).length;
+            document.getElementById('selectedCount').innerText = count;
+        }
+
+        function toggleAllEmployees() {
+            let items = document.querySelectorAll('.emp-list-item');
+            let anyUnchecked = Array.from(items).some(item => !item.querySelector('input').checked);
+            items.forEach(item => {
+                let cb = item.querySelector('input');
+                cb.checked = anyUnchecked;
+                item.classList.toggle('selected', anyUnchecked);
+                item.querySelector('i').classList.toggle('d-none', !anyUnchecked);
+            });
             updateSelectedIds();
         }
 
-        // Initial fetch
         fetchEmployees();
     </script>
 }
-
-
