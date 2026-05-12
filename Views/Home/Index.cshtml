@@ -44,11 +44,20 @@
                                     <input type="text" id="filterSearch" placeholder="بحث بالاسم..." onkeyup="fetchEmployees()">
                                 </div>
 
-                                <div class="pill-selector mb-3">
-                                    @foreach (var dept in new[] { "كل الأقسام", "الإدارة العليا", "تقنية المعلومات", "الموارد البشرية", "التسويق", "العمليات" })
-                                    {
-                                        <div class="pill-item @(dept == "كل الأقسام" ? "active" : "")" onclick="selectDepartment(this, '@(dept == "كل الأقسام" ? "" : dept)')">@dept</div>
-                                    }
+                                <div class="premium-dropdown mb-3" id="deptDropdown">
+                                    <div class="premium-dropdown-selected" onclick="toggleDropdown(event)">
+                                        <span id="selectedDeptName">كل الأقسام</span>
+                                        <i class="fa-solid fa-chevron-down chevron small opacity-50"></i>
+                                    </div>
+                                    <div class="premium-dropdown-list">
+                                        @foreach (var dept in new[] { "كل الأقسام", "الإدارة العليا", "تقنية المعلومات", "الموارد البشرية", "التسويق", "العمليات" })
+                                        {
+                                            <div class="premium-dropdown-item @(dept == "كل الأقسام" ? "active" : "")" 
+                                                 onclick="selectDepartment(this, '@(dept == "كل الأقسام" ? "" : dept)', '@dept')">
+                                                @dept
+                                            </div>
+                                        }
+                                    </div>
                                 </div>
                                 <input type="hidden" id="filterDepartment" value="">
 
@@ -330,11 +339,23 @@
 
 @section Scripts {
     <script>
-        // Department Logic
-        function selectDepartment(el, dept) {
-            document.querySelectorAll('.pill-item').forEach(p => p.classList.remove('active'));
+        // Dropdown Logic
+        function toggleDropdown(e) {
+            e.stopPropagation();
+            document.getElementById('deptDropdown').classList.toggle('open');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            document.getElementById('deptDropdown')?.classList.remove('open');
+        });
+
+        function selectDepartment(el, deptId, deptName) {
+            document.querySelectorAll('.premium-dropdown-item').forEach(p => p.classList.remove('active'));
             el.classList.add('active');
-            document.getElementById('filterDepartment').value = dept;
+            document.getElementById('selectedDeptName').innerText = deptName;
+            document.getElementById('filterDepartment').value = deptId;
+            document.getElementById('deptDropdown').classList.remove('open');
             fetchEmployees();
         }
 
