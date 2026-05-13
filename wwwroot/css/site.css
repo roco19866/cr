@@ -285,6 +285,25 @@ body {
     animation: elastic-dropdown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+/* Icon & Link Styling */
+.nav-link i {
+    color: var(--primary) !important;
+}
+
+.btn-outline-secondary i, 
+.layer-card i {
+    color: var(--primary);
+}
+
+.btn-outline-secondary:hover i {
+    color: white;
+}
+
+/* Specific for 'Contain/Fit' icons */
+.fa-arrows-to-dot, .fa-expand, .fa-compress {
+    color: var(--primary);
+}
+
 /* Glassmorphism & Gradients */
 .dropdown-toggle-premium {
     background: var(--bg-card);
