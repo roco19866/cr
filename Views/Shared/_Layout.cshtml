@@ -14,12 +14,15 @@
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid px-4">
                 <a class="navbar-brand d-flex align-items-center" asp-controller="Home" asp-action="Index">
+                    <div class="logo-container me-2">
+                        <i class="fa-solid fa-certificate"></i>
+                    </div>
                     <span class="brand-text">نظام الشهايد الذكي</span>
                 </a>
                 
-                <div class="d-flex align-items-center order-lg-last">
-                    <button id="themeToggle" class="btn btn-link nav-link px-3" title="تبديل المظهر">
-                        <i class="fa-solid fa-moon text-primary fs-5"></i>
+                <div class="d-flex align-items-center order-lg-last gap-2">
+                    <button id="themeToggle" class="btn btn-light rounded-circle shadow-none" title="تبديل المظهر">
+                        <i class="fa-solid fa-moon text-primary"></i>
                     </button>
                 </div>
 
@@ -28,17 +31,16 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav mx-auto">
+                    <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
                             <a class="nav-link px-3 @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "fw-bold text-primary" : "")" asp-controller="Home" asp-action="Index">
-                                <i class="fa-solid fa-house-chimney me-1 small"></i> الرئيسية
+                                <i class="fa-solid fa-house-chimney me-1 small opacity-50"></i> الرئيسية
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link px-3" href="#"><i class="fa-solid fa-layer-group me-1 small"></i> القوالب</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link px-3" href="#"><i class="fa-solid fa-chart-line me-1 small"></i> الإحصائيات</a>
+                            <a class="nav-link px-3 @(ViewContext.RouteData.Values["Action"]?.ToString() == "Statistics" ? "fw-bold text-primary" : "")" asp-controller="Home" asp-action="Statistics">
+                                <i class="fa-solid fa-chart-pie me-1 small opacity-50"></i> الإحصائيات
+                            </a>
                         </li>
                     </ul>
                 </div>

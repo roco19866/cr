@@ -275,9 +275,21 @@ namespace CertificateSystem.Controllers
                         // In a real scenario, you'd send the file via API, here we log the link
                         Console.WriteLine($"WhatsApp link for {student.Name}: {waLink}");
                     }
+
+                    // 6. Log to History
+                    db.CertificateHistories.Add(new CertificateHistory
+                    {
+                        EmployeeName = student.Name,
+                        EmployeeEmail = student.Email,
+                        ExportType = request.ExportType,
+                        EmailSent = request.SendEmail && !string.IsNullOrEmpty(student.Email),
+                        WhatsAppSent = request.SendWhatsApp && !string.IsNullOrEmpty(student.Phone)
+                    });
                 }
                 counter++;
             }
+            
+            await db.SaveChangesAsync();
 
             // 4. Create ZIP archive
             using (var zipStream = new MemoryStream())
@@ -311,6 +323,12 @@ namespace CertificateSystem.Controllers
                 return Json(new { success = true });
             }
             return Json(new { success = false });
+        }
+
+        public async Task<IActionResult> Statistics([FromServices] AppDbContext db)
+        {
+            var history = await db.CertificateHistories.OrderByDescending(h => h.GeneratedAt).Take(100).ToListAsync();
+            return View(history);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

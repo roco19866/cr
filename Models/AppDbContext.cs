@@ -9,5 +9,7 @@ namespace CertificateSystem.Models
         }
 
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<CertificateHistory> CertificateHistories { get; set; }
+        public DbSet<DesignTemplate> DesignTemplates { get; set; }
     }
 }
