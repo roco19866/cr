@@ -3,17 +3,22 @@
 }
 
 <div class="dashboard-wrapper animate-fade-in" dir="rtl">
+    <!-- Mobile Sidebar Toggle -->
+    <button id="mobileSidebarToggle" type="button" class="btn d-lg-none" onclick="toggleSidebar()">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
     <form asp-action="GenerateCertificates" asp-controller="Home" method="post" enctype="multipart/form-data" class="d-flex w-100 h-100">
         <!-- Sidebar Controls -->
-        <aside class="settings-sidebar">
-            <div class="sidebar-header mb-4">
+        <aside class="settings-sidebar" id="sidebar">
+            <div class="sidebar-header mb-4 p-2">
                 <div class="d-flex align-items-center gap-3">
-                    <div class="logo-container" style="background: var(--primary); color: white; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <div class="logo-container premium-gradient shadow-sm" style="width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white;">
+                        <i class="fa-solid fa-wand-magic-sparkles fs-4"></i>
                     </div>
                     <div>
-                        <h5 class="fw-bold text-main mb-0">استوديو التصميم</h5>
-                        <p class="text-muted small mb-0">تحكم كامل في القوالب</p>
+                        <h5 class="fw-bold text-main mb-0" style="letter-spacing: -0.5px;">استوديو التصميم</h5>
+                        <p class="text-muted small mb-0 opacity-75">تحكم احترافي متكامل</p>
                     </div>
                 </div>
             </div>
@@ -560,5 +565,31 @@
         // Initialization
         fetchEmployees();
         fetchTemplates();
+
+        // Mobile Sidebar Toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('mobileSidebarToggle');
+            sidebar.classList.toggle('show');
+            
+            const icon = toggleBtn.querySelector('i');
+            if (sidebar.classList.contains('show')) {
+                icon.classList.replace('fa-bars', 'fa-xmark');
+            } else {
+                icon.classList.replace('fa-xmark', 'fa-bars');
+            }
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('mobileSidebarToggle');
+            if (sidebar && toggleBtn && window.innerWidth < 992 && 
+                !sidebar.contains(event.target) && 
+                !toggleBtn.contains(event.target) && 
+                sidebar.classList.contains('show')) {
+                toggleSidebar();
+            }
+        });
     </script>
 }
