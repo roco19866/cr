@@ -1,18 +1,18 @@
 :root {
-    /* Colors extracted from the TRAOF logo */
-    --primary: #009e96;      /* Teal from logo */
-    --primary-rgb: 0, 158, 150;
-    --primary-dark: #007d77;
+    /* Colors extracted from the TRAOF logo - Green Focus */
+    --primary: #91c63e;      /* Lime Green from logo */
+    --primary-rgb: 145, 198, 62;
+    --primary-dark: #7ab32f;
     
-    --secondary: #91c63e;    /* Light Green from logo */
-    --secondary-dark: #7ab32f;
+    --secondary: #3d405b;    /* Dark Navy from logo text */
+    --secondary-dark: #2d3047;
 
     --navy-text: #3d405b;    /* Dark Navy/Slate from logo text */
     --navy-rgb: 61, 64, 91;
     --accent: #ffb800;       /* Gold Accent for contrast */
     
     /* Backgrounds & UI Elements */
-    --bg-app: #f4f6f8;
+    --bg-app: #f8fafc;
     --bg-sidebar: #ffffff;
     --bg-card: #ffffff;
     --bg-workspace: #e9ecef; 
@@ -156,13 +156,21 @@ body {
     font-size: 0.95rem;
 }
 
-.btn-premium-primary {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-    color: white !important;
+.btn-premium-gradient {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
+}
+
+.text-primary {
+    color: var(--primary) !important;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border: none;
     box-shadow: 0 4px 15px rgba(var(--primary-rgb), 0.3);
 }
 
-.btn-premium-primary:hover {
+.btn-primary:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(var(--primary-rgb), 0.4);
 }
