@@ -98,83 +98,86 @@
                     </div>
                 </div>
 
-                <!-- 2. Elements Dropdown -->
+                <!-- 2. Name Text Dropdown -->
                 <div class="sidebar-dropdown mb-3">
-                    <button class="btn dropdown-toggle-premium w-100 d-flex align-items-center justify-content-between" type="button" data-bs-toggle="collapse" data-bs-target="#collapseText">
-                        <span><i class="fa-solid fa-layers me-2"></i> 2. تنسيق العناصر</span>
+                    <button class="btn dropdown-toggle-premium w-100 d-flex align-items-center justify-content-between" type="button" data-bs-toggle="collapse" data-bs-target="#collapseName">
+                        <span><i class="fa-solid fa-font me-2"></i> 2. تنسيق نص الاسم</span>
                         <i class="fa-solid fa-chevron-down small opacity-50"></i>
                     </button>
-                    <div id="collapseText" class="collapse mt-2">
+                    <div id="collapseName" class="collapse mt-2">
                         <div class="dropdown-content-box p-3 bg-app rounded-4 border">
-                            <!-- Name Layer -->
-                            <div class="layer-card shadow-sm mb-3" onclick="focusElement('previewName')">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h6 class="fw-bold mb-0 small"><i class="fa-solid fa-font me-2 text-primary"></i> نص الاسم</h6>
-                                    <div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" checked disabled></div>
+                            <div class="row g-2">
+                                <div class="col-12 mb-1">
+                                    <select name="NameFontFamily" id="NameFontFamily" class="form-select form-select-sm" onchange="updateDraggableDesign()">
+                                        <option value="Tajawal">Tajawal (Default)</option>
+                                        <option value="Cairo">Cairo</option>
+                                        <option value="Arial">Arial</option>
+                                    </select>
                                 </div>
-                                <div class="row g-2">
-                                    <div class="col-12 mb-1">
-                                        <select name="NameFontFamily" id="NameFontFamily" class="form-select form-select-sm" onchange="updateDraggableDesign()">
-                                            <option value="Tajawal">Tajawal (Default)</option>
-                                            <option value="Cairo">Cairo</option>
-                                            <option value="Arial">Arial</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-6"><input type="number" name="NameFontSize" id="NameFontSize" class="form-control form-control-sm" value="48" oninput="updateDraggableDesign()" /></div>
-                                    <div class="col-6"><input type="color" name="NameFontColor" id="NameFontColor" class="form-control form-control-sm h-auto p-1" value="#000000" oninput="updateDraggableDesign()" /></div>
-                                    <div class="col-12"><button type="button" class="btn btn-outline-secondary btn-sm w-100" onclick="snapToCenter('NameX', 'NameY', 'previewName')">توسيط</button></div>
-                                </div>
-                                <input type="hidden" id="NameX" name="NameX" value="500" />
-                                <input type="hidden" id="NameY" name="NameY" value="400" />
-                                <input type="hidden" id="NameTextAlign" name="NameTextAlign" value="Center" />
+                                <div class="col-6"><input type="number" name="NameFontSize" id="NameFontSize" class="form-control form-control-sm" value="48" oninput="updateDraggableDesign()" /></div>
+                                <div class="col-6"><input type="color" name="NameFontColor" id="NameFontColor" class="form-control form-control-sm h-auto p-1" value="#000000" oninput="updateDraggableDesign()" /></div>
+                                <div class="col-12"><button type="button" class="btn btn-outline-secondary btn-sm w-100" onclick="snapToCenter('NameX', 'NameY', 'previewName')">توسيط الاسم</button></div>
                             </div>
-
-                            <!-- Civil ID Layer -->
-                            <div class="layer-card shadow-sm mb-3" onclick="focusElement('previewCivil')">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h6 class="fw-bold mb-0 small"><i class="fa-solid fa-id-card me-2 text-primary"></i> السجل المدني</h6>
-                                    <div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="toggleCivil" checked onchange="toggleLayer('previewCivil', this)"></div>
-                                </div>
-                                <div class="row g-2">
-                                    <div class="col-12 mb-1">
-                                        <select name="CivilIdFontFamily" id="CivilIdFontFamily" class="form-select form-select-sm" onchange="updateDraggableDesign()">
-                                            <option value="Tajawal">Tajawal</option>
-                                            <option value="Arial">Arial</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-6"><input type="number" name="CivilIdFontSize" id="CivilIdFontSize" class="form-control form-control-sm" value="32" oninput="updateDraggableDesign()" /></div>
-                                    <div class="col-6"><input type="color" name="CivilIdFontColor" id="CivilIdFontColor" class="form-control form-control-sm h-auto p-1" value="#333333" oninput="updateDraggableDesign()" /></div>
-                                    <div class="col-12"><button type="button" class="btn btn-outline-secondary btn-sm w-100" onclick="snapToCenter('CivilIdX', 'CivilIdY', 'previewCivil')">توسيط</button></div>
-                                </div>
-                                <input type="hidden" id="CivilIdX" name="CivilIdX" value="500" />
-                                <input type="hidden" id="CivilIdY" name="CivilIdY" value="500" />
-                                <input type="hidden" id="CivilIdTextAlign" name="CivilIdTextAlign" value="Center" />
-                            </div>
-
-                            <!-- Date Layer -->
-                            <div class="layer-card shadow-sm" onclick="focusElement('previewDate')">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h6 class="fw-bold mb-0 small"><i class="fa-solid fa-calendar me-2 text-primary"></i> التاريخ</h6>
-                                    <div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="toggleDate" checked onchange="toggleLayer('previewDate', this)"></div>
-                                </div>
-                                <input type="text" name="DateText" id="DateText" class="form-control form-control-sm mb-2" value="@DateTime.Now.ToString("yyyy/MM/dd")" oninput="updateText('previewDate', this.value)" />
-                                <div class="row g-2">
-                                    <div class="col-6"><input type="number" name="DateFontSize" id="DateFontSize" class="form-control form-control-sm" value="28" oninput="updateDraggableDesign()" /></div>
-                                    <div class="col-6"><input type="color" name="DateFontColor" id="DateFontColor" class="form-control form-control-sm h-auto p-1" value="#555555" oninput="updateDraggableDesign()" /></div>
-                                </div>
-                                <input type="hidden" id="DateX" name="DateX" value="800" />
-                                <input type="hidden" id="DateY" name="DateY" value="800" />
-                                <input type="hidden" id="DateFontFamily" name="DateFontFamily" value="Tajawal" />
-                                <input type="hidden" id="DateTextAlign" name="DateTextAlign" value="Center" />
-                            </div>
+                            <input type="hidden" id="NameX" name="NameX" value="500" />
+                            <input type="hidden" id="NameY" name="NameY" value="400" />
+                            <input type="hidden" id="NameTextAlign" name="NameTextAlign" value="Center" />
                         </div>
                     </div>
                 </div>
 
-                <!-- 3. Export Dropdown -->
+                <!-- 3. Civil ID Dropdown -->
+                <div class="sidebar-dropdown mb-3">
+                    <button class="btn dropdown-toggle-premium w-100 d-flex align-items-center justify-content-between" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCivil">
+                        <span><i class="fa-solid fa-id-card me-2"></i> 3. تنسيق السجل المدني</span>
+                        <i class="fa-solid fa-chevron-down small opacity-50"></i>
+                    </button>
+                    <div id="collapseCivil" class="collapse mt-2">
+                        <div class="dropdown-content-box p-3 bg-app rounded-4 border">
+                            <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" id="toggleCivil" checked onchange="toggleLayer('previewCivil', this)"> <label class="small fw-bold">تفعيل الطبقة</label></div>
+                            <div class="row g-2">
+                                <div class="col-12 mb-1">
+                                    <select name="CivilIdFontFamily" id="CivilIdFontFamily" class="form-select form-select-sm" onchange="updateDraggableDesign()">
+                                        <option value="Tajawal">Tajawal</option>
+                                        <option value="Arial">Arial</option>
+                                    </select>
+                                </div>
+                                <div class="col-6"><input type="number" name="CivilIdFontSize" id="CivilIdFontSize" class="form-control form-control-sm" value="32" oninput="updateDraggableDesign()" /></div>
+                                <div class="col-6"><input type="color" name="CivilIdFontColor" id="CivilIdFontColor" class="form-control form-control-sm h-auto p-1" value="#333333" oninput="updateDraggableDesign()" /></div>
+                                <div class="col-12"><button type="button" class="btn btn-outline-secondary btn-sm w-100" onclick="snapToCenter('CivilIdX', 'CivilIdY', 'previewCivil')">توسيط السجل</button></div>
+                            </div>
+                            <input type="hidden" id="CivilIdX" name="CivilIdX" value="500" />
+                            <input type="hidden" id="CivilIdY" name="CivilIdY" value="500" />
+                            <input type="hidden" id="CivilIdTextAlign" name="CivilIdTextAlign" value="Center" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Date Dropdown -->
+                <div class="sidebar-dropdown mb-3">
+                    <button class="btn dropdown-toggle-premium w-100 d-flex align-items-center justify-content-between" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDate">
+                        <span><i class="fa-solid fa-calendar me-2"></i> 4. تنسيق التاريخ</span>
+                        <i class="fa-solid fa-chevron-down small opacity-50"></i>
+                    </button>
+                    <div id="collapseDate" class="collapse mt-2">
+                        <div class="dropdown-content-box p-3 bg-app rounded-4 border">
+                            <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" id="toggleDate" checked onchange="toggleLayer('previewDate', this)"> <label class="small fw-bold">تفعيل الطبقة</label></div>
+                            <input type="text" name="DateText" id="DateText" class="form-control form-control-sm mb-2" value="@DateTime.Now.ToString("yyyy/MM/dd")" oninput="updateText('previewDate', this.value)" />
+                            <div class="row g-2">
+                                <div class="col-6"><input type="number" name="DateFontSize" id="DateFontSize" class="form-control form-control-sm" value="28" oninput="updateDraggableDesign()" /></div>
+                                <div class="col-6"><input type="color" name="DateFontColor" id="DateFontColor" class="form-control form-control-sm h-auto p-1" value="#555555" oninput="updateDraggableDesign()" /></div>
+                            </div>
+                            <input type="hidden" id="DateX" name="DateX" value="800" />
+                            <input type="hidden" id="DateY" name="DateY" value="800" />
+                            <input type="hidden" id="DateFontFamily" name="DateFontFamily" value="Tajawal" />
+                            <input type="hidden" id="DateTextAlign" name="DateTextAlign" value="Center" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Export Dropdown -->
                 <div class="sidebar-dropdown mb-3">
                     <button class="btn dropdown-toggle-premium w-100 d-flex align-items-center justify-content-between" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExport">
-                        <span><i class="fa-solid fa-share-nodes me-2"></i> 3. خيارات التصدير</span>
+                        <span><i class="fa-solid fa-share-nodes me-2"></i> 5. خيارات التصدير</span>
                         <i class="fa-solid fa-chevron-down small opacity-50"></i>
                     </button>
                     <div id="collapseExport" class="collapse mt-2">
