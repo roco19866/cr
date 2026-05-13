@@ -266,6 +266,43 @@ body {
     opacity: 1;
 }
 
+/* Sidebar Dropdowns */
+.dropdown-toggle-premium {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    color: var(--text-main);
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    text-align: right;
+}
+
+.dropdown-toggle-premium:hover {
+    border-color: var(--primary);
+    background: rgba(var(--primary-rgb), 0.05);
+}
+
+.dropdown-toggle-premium[aria-expanded="true"] {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.dropdown-toggle-premium[aria-expanded="true"] i {
+    color: white !important;
+}
+
+.dropdown-content-box {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 /* Custom Accordion */
 .custom-accordion .accordion-item {
     border: none;

@@ -18,16 +18,15 @@
                 </div>
             </div>
 
-            <div class="accordion custom-accordion" id="settingsAccordion">
-                <!-- 0. Design Templates -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTemplates">
-                            <i class="fa-solid fa-bookmark me-2"></i> القوالب المحفوظة
-                        </button>
-                    </h2>
-                    <div id="collapseTemplates" class="accordion-collapse collapse" data-bs-parent="#settingsAccordion">
-                        <div class="accordion-body px-1">
+            <div class="sidebar-menus" id="settingsMenus">
+                <!-- 0. Design Templates Dropdown -->
+                <div class="sidebar-dropdown mb-3">
+                    <button class="btn dropdown-toggle-premium w-100 d-flex align-items-center justify-content-between" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTemplates">
+                        <span><i class="fa-solid fa-bookmark me-2"></i> القوالب المحفوظة</span>
+                        <i class="fa-solid fa-chevron-down small opacity-50"></i>
+                    </button>
+                    <div id="collapseTemplates" class="collapse mt-2">
+                        <div class="dropdown-content-box p-3 bg-app rounded-4 border">
                             <div class="mb-3">
                                 <div class="input-group">
                                     <input type="text" id="templateName" class="form-control form-control-sm border-end-0" placeholder="اسم القالب الجديد...">
@@ -41,25 +40,24 @@
                     </div>
                 </div>
 
-                <!-- 1. Media & Source -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFiles">
-                            <i class="fa-solid fa-database me-2"></i> 1. البيانات والوسائط
-                        </button>
-                    </h2>
-                    <div id="collapseFiles" class="accordion-collapse collapse show" data-bs-parent="#settingsAccordion">
-                        <div class="accordion-body px-1">
+                <!-- 1. Media & Source Dropdown -->
+                <div class="sidebar-dropdown mb-3">
+                    <button class="btn dropdown-toggle-premium w-100 d-flex align-items-center justify-content-between" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFiles">
+                        <span><i class="fa-solid fa-database me-2"></i> 1. البيانات والوسائط</span>
+                        <i class="fa-solid fa-chevron-down small opacity-50"></i>
+                    </button>
+                    <div id="collapseFiles" class="collapse mt-2">
+                        <div class="dropdown-content-box p-3 bg-app rounded-4 border">
                             <div class="mb-4">
                                 <label class="fw-bold mb-2 small text-primary"><i class="fa-solid fa-image me-1"></i> قالب الشهادة (PNG/JPG)</label>
-                                <div class="file-upload-wrapper border-2 border-dashed rounded-4 p-4 text-center transition-all" onclick="document.getElementById('TemplateFile').click()" style="cursor: pointer; background: var(--bg-app); border-color: var(--border-color);">
+                                <div class="file-upload-wrapper border-2 border-dashed rounded-4 p-4 text-center transition-all" onclick="document.getElementById('TemplateFile').click()" style="cursor: pointer; background: var(--bg-card); border-color: var(--border-color);">
                                     <i class="fa-solid fa-cloud-arrow-up fs-2 mb-2 text-primary opacity-50"></i>
                                     <p class="small mb-0 text-muted">اسحب الصورة هنا أو تصفح</p>
                                     <input type="file" id="TemplateFile" name="TemplateFile" class="d-none" accept="image/*" required onchange="previewImage(event)" />
                                 </div>
                             </div>
 
-                            <div class="card border-0 bg-app p-3 rounded-4 mb-3">
+                            <div class="card border-0 bg-card p-3 rounded-4 mb-3 shadow-sm">
                                 <label class="fw-bold mb-3 small text-primary d-flex align-items-center">
                                     <i class="fa-solid fa-users me-2"></i> اختيار الموظفين
                                 </label>
@@ -100,17 +98,16 @@
                     </div>
                 </div>
 
-                <!-- 2. Elements & Layers -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseText">
-                            <i class="fa-solid fa-layers me-2"></i> 2. تنسيق العناصر
-                        </button>
-                    </h2>
-                    <div id="collapseText" class="accordion-collapse collapse" data-bs-parent="#settingsAccordion">
-                        <div class="accordion-body px-1">
+                <!-- 2. Elements Dropdown -->
+                <div class="sidebar-dropdown mb-3">
+                    <button class="btn dropdown-toggle-premium w-100 d-flex align-items-center justify-content-between" type="button" data-bs-toggle="collapse" data-bs-target="#collapseText">
+                        <span><i class="fa-solid fa-layers me-2"></i> 2. تنسيق العناصر</span>
+                        <i class="fa-solid fa-chevron-down small opacity-50"></i>
+                    </button>
+                    <div id="collapseText" class="collapse mt-2">
+                        <div class="dropdown-content-box p-3 bg-app rounded-4 border">
                             <!-- Name Layer -->
-                            <div class="layer-card" onclick="focusElement('previewName')">
+                            <div class="layer-card shadow-sm mb-3" onclick="focusElement('previewName')">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h6 class="fw-bold mb-0 small"><i class="fa-solid fa-font me-2 text-primary"></i> نص الاسم</h6>
                                     <div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" checked disabled></div>
@@ -125,7 +122,7 @@
                                     </div>
                                     <div class="col-6"><input type="number" name="NameFontSize" id="NameFontSize" class="form-control form-control-sm" value="48" oninput="updateDraggableDesign()" /></div>
                                     <div class="col-6"><input type="color" name="NameFontColor" id="NameFontColor" class="form-control form-control-sm h-auto p-1" value="#000000" oninput="updateDraggableDesign()" /></div>
-                                    <div class="col-12"><button type="button" class="btn btn-outline-secondary btn-sm w-100" onclick="snapToCenter('NameX', 'NameY', 'previewName')">توسيط أفقي وعمودي</button></div>
+                                    <div class="col-12"><button type="button" class="btn btn-outline-secondary btn-sm w-100" onclick="snapToCenter('NameX', 'NameY', 'previewName')">توسيط</button></div>
                                 </div>
                                 <input type="hidden" id="NameX" name="NameX" value="500" />
                                 <input type="hidden" id="NameY" name="NameY" value="400" />
@@ -133,7 +130,7 @@
                             </div>
 
                             <!-- Civil ID Layer -->
-                            <div class="layer-card" onclick="focusElement('previewCivil')">
+                            <div class="layer-card shadow-sm mb-3" onclick="focusElement('previewCivil')">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h6 class="fw-bold mb-0 small"><i class="fa-solid fa-id-card me-2 text-primary"></i> السجل المدني</h6>
                                     <div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="toggleCivil" checked onchange="toggleLayer('previewCivil', this)"></div>
@@ -155,7 +152,7 @@
                             </div>
 
                             <!-- Date Layer -->
-                            <div class="layer-card" onclick="focusElement('previewDate')">
+                            <div class="layer-card shadow-sm" onclick="focusElement('previewDate')">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h6 class="fw-bold mb-0 small"><i class="fa-solid fa-calendar me-2 text-primary"></i> التاريخ</h6>
                                     <div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="toggleDate" checked onchange="toggleLayer('previewDate', this)"></div>
@@ -174,15 +171,14 @@
                     </div>
                 </div>
 
-                <!-- 3. Export -->
-                <div class="accordion-item">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExport">
-                            <i class="fa-solid fa-share-nodes me-2"></i> 3. خيارات التصدير
-                        </button>
-                    </h2>
-                    <div id="collapseExport" class="accordion-collapse collapse" data-bs-parent="#settingsAccordion">
-                        <div class="accordion-body px-1">
+                <!-- 3. Export Dropdown -->
+                <div class="sidebar-dropdown mb-3">
+                    <button class="btn dropdown-toggle-premium w-100 d-flex align-items-center justify-content-between" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExport">
+                        <span><i class="fa-solid fa-share-nodes me-2"></i> 3. خيارات التصدير</span>
+                        <i class="fa-solid fa-chevron-down small opacity-50"></i>
+                    </button>
+                    <div id="collapseExport" class="collapse mt-2">
+                        <div class="dropdown-content-box p-3 bg-app rounded-4 border">
                             <div class="btn-group w-100 mb-4" role="group">
                                 <input type="radio" class="btn-check" name="ExportType" id="png" value="png" checked>
                                 <label class="btn btn-outline-primary" for="png">PNG</label>
@@ -190,7 +186,7 @@
                                 <label class="btn btn-outline-primary" for="pdf">PDF</label>
                             </div>
 
-                            <div class="options-group p-3 bg-app rounded-4 border">
+                            <div class="options-group p-3 bg-card rounded-4 border shadow-sm">
                                 <h6 class="fw-bold small mb-3"><i class="fa-solid fa-paper-plane me-1"></i> الإرسال التلقائي</h6>
                                 <div class="form-check form-switch mb-2">
                                     <input class="form-check-input" type="checkbox" id="SendEmail" name="SendEmail" value="true">
